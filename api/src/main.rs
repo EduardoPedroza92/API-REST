@@ -50,7 +50,7 @@ async fn main() -> Result<()> {
                     .route("/eliminar/{id}", web::delete().to(asesores::eliminar)),
             )
     })
-    .bind("127.0.0.1:8000")
+    .bind("0.0.0.0:8000")
     .context("Fallo con la dirección del servidor")?
     .run()
     .await

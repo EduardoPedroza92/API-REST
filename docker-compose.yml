@@ -11,6 +11,10 @@ services:
     command: cargo run #Correr el proyecto
     networks: 
       - api-red
+    depends_on: #Levantarlo cuando la bd esté activa
+      bd:
+        condition: service_healthy
+
 
   bd: #Contenedor mysql
     image: mysql:latest
@@ -23,9 +27,14 @@ services:
       - "./script.sql:/docker-entrypoint-initdb.d/script.sql" 
     networks: 
       - api-red
+    healthcheck: #Rutina para checar si está activa 
+      test: ["CMD", "sh", "-c", "mysql -u root -e 'USE residencias;'"]
+      interval: 10s #Repetir cada 10s
+      retries: 2 #Intentarlo 2 veces
+      start_period: 3m #Espera 3m antes de checar
+      timeout: 2m #Considerarlo fallo si tarda más
 
 networks:
   api-red:
     external: true
     name: api-red
-
